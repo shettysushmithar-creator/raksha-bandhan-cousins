@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Raksha Bandhan — For My Brothers</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@500;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Kalam:wght@400;700&display=swap"
+    rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    :root {
+      --maroon: #5c1a20;
+      --maroon-deep: #3c0f14;
+      --gold: #e2a63e;
+      --gold-soft: #f0c877;
+      --saffron: #e07a3f;
+      --cream: #faf1e2;
+      --ink: #2a1610;
+      --thread: #d8b25c;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: radial-gradient(ellipse at 50% -10%, #ff5e62 0%, #8b1820 45%, #22080b 100%);
+      color: var(--cream);
+      font-family: 'Cormorant Garamond', serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
+
+    /* ---------- floating ambient layer ---------- */
+    #ambient {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .diya {
+      position: absolute;
+      bottom: -60px;
+      width: 14px;
+      height: 18px;
+      opacity: 0.85;
+      animation: rise linear infinite;
+    }
+
+    .diya .flame {
+      width: 6px;
+      height: 10px;
+      margin: 0 auto;
+      background: radial-gradient(circle at 50% 30%, #fff6d6, var(--gold) 55%, var(--saffron) 100%);
+      border-radius: 50% 50% 40% 40%;
+      filter: drop-shadow(0 0 6px var(--gold));
+      animation: flicker 1.4s ease-in-out infinite alternate;
+    }
+
+    .diya .bowl {
+      width: 14px;
+      height: 8px;
+      background: linear-gradient(180deg, #b97a2e, #7a4816);
+      border-radius: 0 0 50% 50% / 0 0 60% 60%;
+    }
+
+    @keyframes rise {
+      0% {
+        transform: translateY(0) translateX(0) rotate(0deg);
+        opacity: 0;
+      }
+
+      8% {
+        opacity: 0.9;
+      }
+
+      92% {
+        opacity: 0.7;
+      }
+
+      100% {
+        transform: translateY(-115vh) translateX(var(--drift, 40px)) rotate(6deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes flicker {
+      from {
+        transform: scale(1);
+      }
+
+      to {
+        transform: scale(1.15) translateY(-1px);
+      }
+    }
+
+    .thread-strand {
+      position: absolute;
+      opacity: 0.18;
+      stroke: var(--gold-soft);
+      fill: none;
+      stroke-width: 1.4;
+      animation: sway 9s ease-in-out infinite;
+    }
+
+    @keyframes sway {
+
+      0%,
+      100% {
+        transform: translateX(0) rotate(0deg);
+      }
+
+      50% {
+        transform: translateX(14px) rotate(1.5deg);
+      }
+    }
+
+    /* ---------- layout ---------- */
+    main {
+      position: relative;
+      z-index: 1;
+    }
+
+    section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 6vh 6vw;
+      position: relative;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      60% { transform: scale(1.15); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes bounceInDown {
+      0% { transform: translateY(-30px); opacity: 0; }
+      60% { transform: translateY(15px); opacity: 1; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+
+    .eyebrow {
+      font-family: 'Kalam', cursive;
+      color: var(--gold-soft);
+      font-size: 1.05rem;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.6rem;
+      opacity: 0;
+      animation: bounceInDown 0.8s ease-out forwards;
+      animation-delay: 0.2s;
+    }
+
+    h1.hero-title {
+      font-family: 'Cormorant SC', serif;
+      font-weight: 700;
+      font-size: clamp(2.8rem, 8vw, 6.2rem);
+      text-align: center;
+      margin: 0;
+      letter-spacing: 0.02em;
+      background: linear-gradient(180deg, #fff6df 0%, var(--gold) 55%, var(--saffron) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      filter: drop-shadow(0 2px 18px rgba(226, 166, 62, 0.35));
+      opacity: 0;
+      animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, floaty 6s ease-in-out 0.8s infinite;
+      animation-delay: 0.5s, 1.3s;
+    }
+
+    @keyframes floaty {
+
+      0%,
+      100% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    .hero-sub {
+      max-width: 620px;
+      text-align: center;
+      font-size: clamp(1.05rem, 1.6vw, 1.35rem);
+      line-height: 1.6;
+      color: #f3e2c2;
+      margin-top: 1.4rem;
+      font-style: italic;
+      opacity: 0;
+      animation: bounceInDown 0.8s ease-out forwards;
+      animation-delay: 0.8s;
+    }
+
+    .rakhi-icon {
+      width: 140px;
+      height: 140px;
+      margin-bottom: 1rem;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--gold);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, floaty 5s ease-in-out 0.8s infinite;
+      animation-delay: 0s, 0.8s;
+    }
+
+    .scroll-cue {
+      position: absolute;
+      bottom: 5vh;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Kalam', cursive;
+      font-size: 0.95rem;
+      color: var(--gold-soft);
+      opacity: 0.8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .scroll-cue .arrow {
+      width: 14px;
+      height: 14px;
+      border-right: 2px solid var(--gold-soft);
+      border-bottom: 2px solid var(--gold-soft);
+      transform: rotate(45deg);
+      animation: bounce 1.8s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+
+      0%,
+      100% {
+        transform: rotate(45deg) translateY(0);
+        opacity: 0.5;
+      }
+
+      50% {
+        transform: rotate(45deg) translateY(6px);
+        opacity: 1;
+      }
+    }
+
+    /* ---------- intro line ---------- */
+    .intro-text {
+      max-width: 700px;
+      text-align: center;
+      font-size: clamp(1.2rem, 2vw, 1.6rem);
+      line-height: 1.7;
+      color: #f6e8cf;
+    }
+
+    .intro-text .accent {
+      font-family: 'Kalam', cursive;
+      color: var(--gold);
+    }
+
+    /* ---------- brothers constellation ---------- */
+    #brothers {
+      padding-top: 10vh;
+    }
+
+    .constellation-title {
+      font-family: 'Cormorant SC', serif;
+      font-weight: 700;
+      font-size: clamp(2rem, 4vw, 3rem);
+      color: var(--gold-soft);
+      text-align: center;
+      margin-bottom: 0.4rem;
+    }
+
+    .constellation-hint {
+      font-family: 'Kalam', cursive;
+      font-size: 1rem;
+      color: #e6c898;
+      margin-bottom: 5vh;
+      opacity: 0.85;
+    }
+
+    .orbit-field {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 3rem 2rem;
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding-bottom: 5vh;
+    }
+
+    .planet {
+      position: relative;
+      width: 190px;
+      cursor: pointer;
+      text-align: center;
+      animation: drift 7s ease-in-out infinite;
+      transition: transform 0.35s ease;
+    }
+
+    .planet:hover {
+      transform: scale(1.06) translateY(-6px);
+    }
+
+    .planet:focus-visible {
+      outline: 2px solid var(--gold-soft);
+      outline-offset: 6px;
+      border-radius: 20px;
+    }
+
+    .planet:nth-child(3n+1) {
+      animation-delay: 0s;
+    }
+
+    .planet:nth-child(3n+2) {
+      animation-delay: 1.4s;
+    }
+
+    .planet:nth-child(3n) {
+      animation-delay: 2.8s;
+    }
+
+    @keyframes drift {
+
+      0%,
+      100% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-16px);
+      }
+    }
+
+    /* Updated for photos */
+    .planet-orb {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      margin: 0 auto 1rem;
+      box-shadow: 0 0 40px rgba(226, 166, 62, 0.5), inset 0 -14px 26px rgba(0, 0, 0, 0.18);
+      border: 5px solid rgba(255, 255, 255, 0.9);
+      background-size: cover;
+      background-position: center top;
+      background-repeat: no-repeat;
+      background-color: #3c0f14;
+      /* fallback */
+      transition: border-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .planet-orb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      border-radius: 50%;
+      display: block;
+    }
+
+    .planet-orb .initial {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      font-family: 'Cormorant SC', serif;
+      font-size: 4rem;
+      color: #fff6df;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+
+    @keyframes wobble {
+      0%, 100% { transform: scale(1.1) rotate(0deg); }
+      25% { transform: scale(1.1) rotate(8deg); }
+      50% { transform: scale(1.1) rotate(-8deg); }
+      75% { transform: scale(1.1) rotate(4deg); }
+    }
+
+    .planet:hover .planet-orb {
+      border-color: #ffeb3b;
+      animation: wobble 0.5s ease-in-out infinite;
+    }
+
+    .planet[data-theme="Sanath"] .planet-orb {
+      background-image: url('sanath.jpg');
+    }
+
+    .planet[data-theme="Sachin"] .planet-orb {
+      background-image: url('sachin.jpg');
+    }
+
+    .planet[data-theme="Nithin"] .planet-orb {
+      background-image: url('nithin.jpg');
+    }
+
+    .planet-name {
+      font-family: 'Kalam', cursive;
+      font-weight: 700;
+      font-size: 1.8rem;
+      color: #ffffff;
+      letter-spacing: 0.03em;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9), 0 0 10px rgba(0,0,0,0.6);
+    }
+
+    .planet-tag {
+      font-family: 'Kalam', cursive;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #ffeb3b;
+      margin-top: 5px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9), 0 0 10px rgba(0,0,0,0.6);
+    }
+
+    /* ---------- letter overlay ---------- */
+    .letter-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      background: rgba(20, 6, 7, 0.82);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4vh 4vw;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    .letter-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .letter-card {
+      position: relative;
+      width: min(640px, 94vw);
+      max-height: 86vh;
+      overflow-y: auto;
+      background: linear-gradient(180deg, #fbf0d8, #f4e0ad);
+      color: var(--ink);
+      border-radius: 18px;
+      padding: 3rem 2.6rem 2.6rem;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+      transform: translateY(20px) scale(0.97);
+      transition: transform 0.4s cubic-bezier(.2, .9, .25, 1.1);
+    }
+
+    .letter-overlay.open .letter-card {
+      transform: translateY(0) scale(1);
+    }
+
+    .letter-close {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      background: none;
+      border: none;
+      font-size: 1.6rem;
+      color: var(--maroon);
+      cursor: pointer;
+      line-height: 1;
+      font-family: 'Cormorant SC', serif;
+    }
+
+    .letter-close:hover {
+      color: var(--saffron);
+    }
+
+    .letter-photo-container {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      margin: 0 auto 1.5rem;
+      border: 4px solid var(--maroon);
+      box-shadow: 0 8px 20px rgba(92, 26, 32, 0.35);
+      overflow: hidden;
+      background-size: cover;
+      background-position: center top;
+      background-color: #3c0f14;
+    }
+    
+    .letter-photo-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
+
+    .letter-heading {
+      font-family: 'Cormorant SC', serif;
+      font-weight: 700;
+      font-size: 2.1rem;
+      color: var(--maroon);
+      margin: 0 0 0.2rem;
+    }
+
+    .letter-role {
+      font-family: 'Kalam', cursive;
+      color: var(--saffron);
+      margin-bottom: 1.4rem;
+      display: block;
+    }
+
+    .letter-body p {
+      font-size: 1.18rem;
+      line-height: 1.75;
+      margin: 0 0 1.05rem;
+    }
+
+    .letter-signoff {
+      font-family: 'Kalam', cursive;
+      font-size: 1.2rem;
+      color: var(--maroon);
+      margin-top: 1.6rem;
+    }
+
+    .rakhi-anim {
+      width: 70px;
+      margin: 0 auto 1.2rem;
+      display: block;
+    }
+
+    /* ---------- footer ---------- */
+    footer {
+      padding: 10vh 6vw 8vh;
+      text-align: center;
+    }
+
+    footer .wish {
+      font-family: 'Cormorant SC', serif;
+      font-weight: 700;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      background: linear-gradient(180deg, #fff6df, var(--gold));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    footer .from {
+      font-family: 'Kalam', cursive;
+      margin-top: 0.8rem;
+      color: #e6c898;
+      font-size: 1.1rem;
+    }
+
+    @media (max-width: 720px) {
+      .orbit-field {
+        gap: 2.5rem 1rem;
+      }
+
+      .planet {
+        width: 45%;
+        min-width: 140px;
+        margin: 0;
+      }
+    }
+
+    .music-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 100;
+      background: rgba(92, 26, 32, 0.7);
+      border: 2px solid var(--gold);
+      color: var(--gold);
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      backdrop-filter: blur(4px);
+      transition: transform 0.3s, background 0.3s;
+    }
+    .music-toggle:hover {
+      transform: scale(1.1);
+      background: rgba(92, 26, 32, 0.9);
+    }
+    .music-toggle.playing {
+      animation: pulseMusic 2s infinite;
+    }
+    @keyframes pulseMusic {
+      0% { box-shadow: 0 0 0 0 rgba(226, 166, 62, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(226, 166, 62, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(226, 166, 62, 0); }
+    }
+  </style>
+</head>
+
+<body>
+
+  <audio id="bgMusic" loop>
+    <source src="nastelbom-background-music-463062.mp3" type="audio/mpeg">
+  </audio>
+  <button id="musicToggle" aria-label="Toggle Music" class="music-toggle">
+    <span class="icon">🎵</span>
+  </button>
+
+  <div id="ambient" aria-hidden="true"></div>
+
+  <main>
+
+    <!-- HERO -->
+    <section id="hero">
+      <img src="rakhi.png" alt="Rakhi" class="rakhi-icon" aria-hidden="true">
+      <p class="eyebrow">because I couldn't be there to annoy you in person</p>
+      <h1 class="hero-title">Raksha&nbsp;Bandhan</h1>
+      <p class="hero-sub">Three brothers, one thread, and a lifetime of stealing my snacks. Scroll down to see what I made for you three.</p>
+      <div class="scroll-cue"><span>scroll</span><span class="arrow"></span></div>
+    </section>
+
+    <!-- INTRO -->
+    <section id="intro">
+      <p class="intro-text">Distance, busy schedules, and the fact that I couldn't be there to demand my gifts in person this
+        year — none of it changes what this thread means. So I built you three a little corner of the internet instead.
+        <span class="accent">Tap on your goofy faces below (if you dare).</span></p>
+    </section>
+
+    <!-- BROTHERS -->
+    <section id="brothers">
+      <h2 class="constellation-title">The Chaos Trio</h2>
+      <p class="constellation-hint">tap a photo to open your letter ✦</p>
+      <div class="orbit-field">
+
+        <button class="planet" data-theme="Sanath" data-name="Sanath" aria-haspopup="dialog">
+          <div class="planet-orb"></div>
+          <div class="planet-name">Sanath</div>
+          <div class="planet-tag">the eldest, the ultimate boss of the house</div>
+        </button>
+
+        <button class="planet" data-theme="Sachin" data-name="Sachin" aria-haspopup="dialog">
+          <div class="planet-orb"></div>
+          <div class="planet-name">Sachin</div>
+          <div class="planet-tag">the one with the annoying comebacks</div>
+        </button>
+
+        <button class="planet" data-theme="Nithin" data-name="Nithin" aria-haspopup="dialog">
+          <div class="planet-orb"></div>
+          <div class="planet-name">Nithin</div>
+          <div class="planet-tag">the superstar partner in crime</div>
+        </button>
+
+<button class="planet" data-theme="Rathan" data-name="Rathan" aria-haspopup="dialog">
+          <div class="planet-orb"><div class="initial">R</div></div>
+          <div class="planet-name">Rathan</div>
+          <div class="planet-tag">always there for me</div>
+        </button>
+        <button class="planet" data-theme="Mithun" data-name="Mithun" aria-haspopup="dialog">
+          <div class="planet-orb"><div class="initial">M</div></div>
+          <div class="planet-name">Mithun</div>
+          <div class="planet-tag">the amazing brother</div>
+        </button>
+        <button class="planet" data-theme="Samarth" data-name="Samarth" aria-haspopup="dialog">
+          <div class="planet-orb"><div class="initial">S</div></div>
+          <div class="planet-name">Samarth</div>
+          <div class="planet-tag">the protector</div>
+        </button>
+        <button class="planet" data-theme="Sukesh" data-name="Sukesh" aria-haspopup="dialog">
+          <div class="planet-orb"><div class="initial">S</div></div>
+          <div class="planet-name">Sukesh</div>
+          <div class="planet-tag">the cool cousin</div>
+        </button>
+        <button class="planet" data-theme="Sandarshan" data-name="Sandarshan" aria-haspopup="dialog">
+          <div class="planet-orb"><div class="initial">S</div></div>
+          <div class="planet-name">Sandarshan</div>
+          <div class="planet-tag">the cool cousin</div>
+        </button>
+        <button class="planet" data-theme="AdhuAnna" data-name="Adhu Anna" aria-haspopup="dialog">
+          <div class="planet-orb"><div class="initial">A</div></div>
+          <div class="planet-name">Adhu Anna</div>
+          <div class="planet-tag">partner in crime</div>
+        </button>
+        <button class="planet" data-theme="PaviAnnaMakkimane" data-name="Pavi Anna Makkimane" aria-haspopup="dialog">
+          <div class="planet-orb"><div class="initial">P</div></div>
+          <div class="planet-name">Pavi Anna Makkimane</div>
+          <div class="planet-tag">always there for me</div>
+        </button>
+        <button class="planet" data-theme="VeeraAnna" data-name="Veera Anna" aria-haspopup="dialog">
+          <div class="planet-orb"><div class="initial">V</div></div>
+          <div class="planet-name">Veera Anna</div>
+          <div class="planet-tag">always smiling</div>
+        </button>
+        <button class="planet" data-theme="Sura" data-name="Sura" aria-haspopup="dialog">
+          <div class="planet-orb"><div class="initial">S</div></div>
+          <div class="planet-name">Sura</div>
+          <div class="planet-tag">always there for me</div>
+        </button>
+        <button class="planet" data-theme="MadhuAnna" data-name="Madhu Anna" aria-haspopup="dialog">
+          <div class="planet-orb"><div class="initial">M</div></div>
+          <div class="planet-name">Madhu Anna</div>
+          <div class="planet-tag">the best advisor</div>
+        </button>
+        <button class="planet" data-theme="ManuAnna" data-name="Manu Anna" aria-haspopup="dialog">
+          <div class="planet-orb"><div class="initial">M</div></div>
+          <div class="planet-name">Manu Anna</div>
+          <div class="planet-tag">the fun one</div>
+        </button>
+        <button class="planet" data-theme="VinodAnna" data-name="Vinod Anna" aria-haspopup="dialog">
+          <div class="planet-orb"><div class="initial">V</div></div>
+          <div class="planet-name">Vinod Anna</div>
+          <div class="planet-tag">the amazing brother</div>
+        </button>
+        <button class="planet" data-theme="Chinna" data-name="Chinna" aria-haspopup="dialog">
+          <div class="planet-orb"><div class="initial">C</div></div>
+          <div class="planet-name">Chinna</div>
+          <div class="planet-tag">the amazing brother</div>
+        </button>
+        <button class="planet" data-theme="NandaAnna" data-name="Nanda Anna" aria-haspopup="dialog">
+          <div class="planet-orb"><div class="initial">N</div></div>
+          <div class="planet-name">Nanda Anna</div>
+          <div class="planet-tag">always there for me</div>
+        </button>
+        <button class="planet" data-theme="ParadeepAnna" data-name="Paradeep Anna" aria-haspopup="dialog">
+          <div class="planet-orb"><div class="initial">P</div></div>
+          <div class="planet-name">Paradeep Anna</div>
+          <div class="planet-tag">the cool cousin</div>
+        </button>
+        <button class="planet" data-theme="Rithivik" data-name="Rithivik" aria-haspopup="dialog">
+          <div class="planet-orb"><div class="initial">R</div></div>
+          <div class="planet-name">Rithivik</div>
+          <div class="planet-tag">the cool cousin</div>
+        </button>
+        <button class="planet" data-theme="NadmaniPaviAnna" data-name="Nadmani Pavi Anna" aria-haspopup="dialog">
+          <div class="planet-orb"><div class="initial">N</div></div>
+          <div class="planet-name">Nadmani Pavi Anna</div>
+          <div class="planet-tag">always smiling</div>
+        </button>
+        <button class="planet" data-theme="Abhi" data-name="Abhi" aria-haspopup="dialog">
+          <div class="planet-orb"><div class="initial">A</div></div>
+          <div class="planet-name">Abhi</div>
+          <div class="planet-tag">the best advisor</div>
+        </button>
+        <button class="planet" data-theme="ParashaAnna" data-name="Parasha Anna" aria-haspopup="dialog">
+          <div class="planet-orb"><div class="initial">P</div></div>
+          <div class="planet-name">Parasha Anna</div>
+          <div class="planet-tag">the amazing brother</div>
+        </button>
+        <button class="planet" data-theme="RaviAnna" data-name="Ravi Anna" aria-haspopup="dialog">
+          <div class="planet-orb"><div class="initial">R</div></div>
+          <div class="planet-name">Ravi Anna</div>
+          <div class="planet-tag">always smiling</div>
+        </button>
+        <button class="planet" data-theme="RajaAnna" data-name="Raja Anna" aria-haspopup="dialog">
+          <div class="planet-orb"><div class="initial">R</div></div>
+          <div class="planet-name">Raja Anna</div>
+          <div class="planet-tag">the cool cousin</div>
+        </button>
+        <button class="planet" data-theme="RaguAnna" data-name="Ragu Anna" aria-haspopup="dialog">
+          <div class="planet-orb"><div class="initial">R</div></div>
+          <div class="planet-name">Ragu Anna</div>
+          <div class="planet-tag">always smiling</div>
+        </button>
+
+      </div>
+    </section>
+
+    <footer>
+      <div class="wish">Happy Raksha Bandhan</div>
+      <div class="from">— with all my love, always</div>
+    </footer>
+
+  </main>
+
+  <!-- LETTER OVERLAY -->
+  <div class="letter-overlay" id="letterOverlay" role="dialog" aria-modal="true" aria-labelledby="letterHeading">
+    <div class="letter-card">
+      <button class="letter-close" id="letterClose" aria-label="Close letter">&times;</button>
+      <div id="letterPhotoContainer" class="letter-photo-container"></div>
+      <h3 class="letter-heading" id="letterHeading">Dear <span id="letterName">Brother</span>,</h3>
+      <span class="letter-role" id="letterRole"></span>
+      <div class="letter-body" id="letterBody"></div>
+      <div class="letter-signoff">Tightly tied, always — <br>your sister</div>
+    </div>
+  </div>
+
+  <script>
+    // ---------- ambient floating diyas ----------
+    const ambient = document.getElementById('ambient');
+    const DIYA_COUNT = 14;
+    for (let i = 0; i < DIYA_COUNT; i++) {
+      const d = document.createElement('div');
+      d.className = 'diya';
+      const left = Math.random() * 100;
+      const duration = 10 + Math.random() * 10;
+      const delay = Math.random() * 14;
+      const drift = (Math.random() * 80 - 40) + 'px';
+      d.style.left = left + 'vw';
+      d.style.animationDuration = duration + 's';
+      d.style.animationDelay = delay + 's';
+      d.style.setProperty('--drift', drift);
+      d.innerHTML = '<div class="flame"></div><div class="bowl"></div>';
+      ambient.appendChild(d);
+    }
+
+    // ---------- letters content ----------
+    const letters = {
+      Sanath: {
+        role: "to the eldest, the ultimate boss of the house",
+        paragraphs: [
+          "Since you're the absolute oldest, you've always acted like you own the place (and let's be honest, you still think you're my second father 😂). You set the rules, and the rest of us just had to figure out how to break them without you noticing 🤫.",
+          "But jokes aside, being the eldest means you've always carried the most responsibility, and you've always made sure I was safe and protected 🛡️. You were my very first bodyguard.",
+          "Consider this virtual rakhi tied 🧵! Thank you for always looking out for your little sister. You'll always be my favorite (just don't tell the other two 😉❤️)."
+        ]
+      },
+      Sachin: {
+        role: "to the one who never lets me win an argument",
+        paragraphs: [
+          "You have never, ever let me win an argument, and you have the most annoying comebacks ready at all times 🙄. If there was a world championship for annoying your little sister, you would definitely take home the gold 🥇.",
+          "But beneath all that teasing and the 'I'm not listening' attitude, you're the one who secretly checks in 🕵️‍♂️. You're the one who makes everyone laugh when things get too serious 🤣.",
+          "Here is your virtual rakhi 🪢! Next time we meet, I expect a proper gift 🎁 (and no, 'my presence is your gift' does not count this time). Love you always 🥰!"
+        ]
+      },
+      Nithin: {
+        role: "to the superstar partner in crime",
+        paragraphs: [
+          "Look at you posing against the wall like you're starring in a movie 📸😎! You might be the youngest of the three of you, but you definitely have the most attitude 💅.",
+          "Because we're closest in age, we spent the most time fighting over the TV remote 📺, snacks 🍕, and getting each other in trouble. But even though we fight like kids, you've always acted like a big, protective older brother when it counts 🦸‍♂️.",
+          "Sending you all the love and this virtual rakhi 🪢 from your favorite little sister. Keep smiling, stay out of trouble, and remember I'm always cheering for you 🎉💖!"
+        ]
+      },
+"Rathan": {
+        role: "always there for me",
+        paragraphs: [
+          "Happy Raksha Bandhan! Even though we might not see each other every day, you're always in my thoughts.",
+          "Thank you for always being such a wonderful brother and for always looking out for me. You mean so much to our family.",
+          "Here is your virtual rakhi! Wishing you all the happiness and success in the world. Love you!"
+        ]
+      },
+      "Mithun": {
+        role: "the amazing brother",
+        paragraphs: [
+          "Happy Raksha Bandhan! Even though we might not see each other every day, you're always in my thoughts.",
+          "Thank you for always being such a wonderful brother and for always looking out for me. You mean so much to our family.",
+          "Here is your virtual rakhi! Wishing you all the happiness and success in the world. Love you!"
+        ]
+      },
+      "Samarth": {
+        role: "the protector",
+        paragraphs: [
+          "Happy Raksha Bandhan! Even though we might not see each other every day, you're always in my thoughts.",
+          "Thank you for always being such a wonderful brother and for always looking out for me. You mean so much to our family.",
+          "Here is your virtual rakhi! Wishing you all the happiness and success in the world. Love you!"
+        ]
+      },
+      "Sukesh": {
+        role: "the cool cousin",
+        paragraphs: [
+          "Happy Raksha Bandhan! Even though we might not see each other every day, you're always in my thoughts.",
+          "Thank you for always being such a wonderful brother and for always looking out for me. You mean so much to our family.",
+          "Here is your virtual rakhi! Wishing you all the happiness and success in the world. Love you!"
+        ]
+      },
+      "Sandarshan": {
+        role: "the cool cousin",
+        paragraphs: [
+          "Happy Raksha Bandhan! Even though we might not see each other every day, you're always in my thoughts.",
+          "Thank you for always being such a wonderful brother and for always looking out for me. You mean so much to our family.",
+          "Here is your virtual rakhi! Wishing you all the happiness and success in the world. Love you!"
+        ]
+      },
+      "Adhu Anna": {
+        role: "partner in crime",
+        paragraphs: [
+          "Happy Raksha Bandhan! Even though we might not see each other every day, you're always in my thoughts.",
+          "Thank you for always being such a wonderful brother and for always looking out for me. You mean so much to our family.",
+          "Here is your virtual rakhi! Wishing you all the happiness and success in the world. Love you!"
+        ]
+      },
+      "Pavi Anna Makkimane": {
+        role: "always there for me",
+        paragraphs: [
+          "Happy Raksha Bandhan! Even though we might not see each other every day, you're always in my thoughts.",
+          "Thank you for always being such a wonderful brother and for always looking out for me. You mean so much to our family.",
+          "Here is your virtual rakhi! Wishing you all the happiness and success in the world. Love you!"
+        ]
+      },
+      "Veera Anna": {
+        role: "always smiling",
+        paragraphs: [
+          "Happy Raksha Bandhan! Even though we might not see each other every day, you're always in my thoughts.",
+          "Thank you for always being such a wonderful brother and for always looking out for me. You mean so much to our family.",
+          "Here is your virtual rakhi! Wishing you all the happiness and success in the world. Love you!"
+        ]
+      },
+      "Sura": {
+        role: "always there for me",
+        paragraphs: [
+          "Happy Raksha Bandhan! Even though we might not see each other every day, you're always in my thoughts.",
+          "Thank you for always being such a wonderful brother and for always looking out for me. You mean so much to our family.",
+          "Here is your virtual rakhi! Wishing you all the happiness and success in the world. Love you!"
+        ]
+      },
+      "Madhu Anna": {
+        role: "the best advisor",
+        paragraphs: [
+          "Happy Raksha Bandhan! Even though we might not see each other every day, you're always in my thoughts.",
+          "Thank you for always being such a wonderful brother and for always looking out for me. You mean so much to our family.",
+          "Here is your virtual rakhi! Wishing you all the happiness and success in the world. Love you!"
+        ]
+      },
+      "Manu Anna": {
+        role: "the fun one",
+        paragraphs: [
+          "Happy Raksha Bandhan! Even though we might not see each other every day, you're always in my thoughts.",
+          "Thank you for always being such a wonderful brother and for always looking out for me. You mean so much to our family.",
+          "Here is your virtual rakhi! Wishing you all the happiness and success in the world. Love you!"
+        ]
+      },
+      "Vinod Anna": {
+        role: "the amazing brother",
+        paragraphs: [
+          "Happy Raksha Bandhan! Even though we might not see each other every day, you're always in my thoughts.",
+          "Thank you for always being such a wonderful brother and for always looking out for me. You mean so much to our family.",
+          "Here is your virtual rakhi! Wishing you all the happiness and success in the world. Love you!"
+        ]
+      },
+      "Chinna": {
+        role: "the amazing brother",
+        paragraphs: [
+          "Happy Raksha Bandhan! Even though we might not see each other every day, you're always in my thoughts.",
+          "Thank you for always being such a wonderful brother and for always looking out for me. You mean so much to our family.",
+          "Here is your virtual rakhi! Wishing you all the happiness and success in the world. Love you!"
+        ]
+      },
+      "Nanda Anna": {
+        role: "always there for me",
+        paragraphs: [
+          "Happy Raksha Bandhan! Even though we might not see each other every day, you're always in my thoughts.",
+          "Thank you for always being such a wonderful brother and for always looking out for me. You mean so much to our family.",
+          "Here is your virtual rakhi! Wishing you all the happiness and success in the world. Love you!"
+        ]
+      },
+      "Paradeep Anna": {
+        role: "the cool cousin",
+        paragraphs: [
+          "Happy Raksha Bandhan! Even though we might not see each other every day, you're always in my thoughts.",
+          "Thank you for always being such a wonderful brother and for always looking out for me. You mean so much to our family.",
+          "Here is your virtual rakhi! Wishing you all the happiness and success in the world. Love you!"
+        ]
+      },
+      "Rithivik": {
+        role: "the cool cousin",
+        paragraphs: [
+          "Happy Raksha Bandhan! Even though we might not see each other every day, you're always in my thoughts.",
+          "Thank you for always being such a wonderful brother and for always looking out for me. You mean so much to our family.",
+          "Here is your virtual rakhi! Wishing you all the happiness and success in the world. Love you!"
+        ]
+      },
+      "Nadmani Pavi Anna": {
+        role: "always smiling",
+        paragraphs: [
+          "Happy Raksha Bandhan! Even though we might not see each other every day, you're always in my thoughts.",
+          "Thank you for always being such a wonderful brother and for always looking out for me. You mean so much to our family.",
+          "Here is your virtual rakhi! Wishing you all the happiness and success in the world. Love you!"
+        ]
+      },
+      "Abhi": {
+        role: "the best advisor",
+        paragraphs: [
+          "Happy Raksha Bandhan! Even though we might not see each other every day, you're always in my thoughts.",
+          "Thank you for always being such a wonderful brother and for always looking out for me. You mean so much to our family.",
+          "Here is your virtual rakhi! Wishing you all the happiness and success in the world. Love you!"
+        ]
+      },
+      "Parasha Anna": {
+        role: "the amazing brother",
+        paragraphs: [
+          "Happy Raksha Bandhan! Even though we might not see each other every day, you're always in my thoughts.",
+          "Thank you for always being such a wonderful brother and for always looking out for me. You mean so much to our family.",
+          "Here is your virtual rakhi! Wishing you all the happiness and success in the world. Love you!"
+        ]
+      },
+      "Ravi Anna": {
+        role: "always smiling",
+        paragraphs: [
+          "Happy Raksha Bandhan! Even though we might not see each other every day, you're always in my thoughts.",
+          "Thank you for always being such a wonderful brother and for always looking out for me. You mean so much to our family.",
+          "Here is your virtual rakhi! Wishing you all the happiness and success in the world. Love you!"
+        ]
+      },
+      "Raja Anna": {
+        role: "the cool cousin",
+        paragraphs: [
+          "Happy Raksha Bandhan! Even though we might not see each other every day, you're always in my thoughts.",
+          "Thank you for always being such a wonderful brother and for always looking out for me. You mean so much to our family.",
+          "Here is your virtual rakhi! Wishing you all the happiness and success in the world. Love you!"
+        ]
+      },
+      "Ragu Anna": {
+        role: "always smiling",
+        paragraphs: [
+          "Happy Raksha Bandhan! Even though we might not see each other every day, you're always in my thoughts.",
+          "Thank you for always being such a wonderful brother and for always looking out for me. You mean so much to our family.",
+          "Here is your virtual rakhi! Wishing you all the happiness and success in the world. Love you!"
+        ]
+      },
+    };
+
+    const overlay = document.getElementById('letterOverlay');
+    const letterName = document.getElementById('letterName');
+    const letterRole = document.getElementById('letterRole');
+    const letterBody = document.getElementById('letterBody');
+    const closeBtn = document.getElementById('letterClose');
+    const photoContainer = document.getElementById('letterPhotoContainer');
+
+    document.querySelectorAll('.planet').forEach(p => {
+      p.addEventListener('click', () => {
+        const name = p.dataset.name;
+        const data = letters[name];
+        letterName.textContent = name;
+        letterRole.textContent = data.role;
+        letterBody.innerHTML = data.paragraphs.map(t => `<p>${t}</p>`).join('');
+        
+        // Dynamically grab the photo from the clicked brother and put it in the letter
+        const orb = p.querySelector('.planet-orb');
+        if (orb.innerHTML.trim() !== '') {
+          photoContainer.innerHTML = orb.innerHTML;
+          photoContainer.style.backgroundImage = 'none';
+        } else {
+          photoContainer.innerHTML = '';
+          const bg = getComputedStyle(orb).backgroundImage;
+          photoContainer.style.backgroundImage = bg;
+        }
+
+        overlay.classList.add('open');
+        
+        // Playful confetti when they open a letter!
+        confetti({
+          particleCount: 80,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#e2a63e', '#e07a3f', '#d84350']
+        });
+      });
+    });
+
+    function closeLetter() { overlay.classList.remove('open'); }
+    closeBtn.addEventListener('click', closeLetter);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) closeLetter(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLetter(); });
+
+    // ---------- Background Music ----------
+    const bgMusic = document.getElementById('bgMusic');
+    const musicToggle = document.getElementById('musicToggle');
+    bgMusic.volume = 0.6;
+    let musicStarted = false;
+    let confettiFired = false;
+
+    function fireWelcomeConfetti() {
+      if (confettiFired) return;
+      confettiFired = true;
+      var duration = 3000;
+      var end = Date.now() + duration;
+      (function frame() {
+        confetti({
+          particleCount: 5,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0 },
+          colors: ['#e2a63e', '#e07a3f', '#d84350']
+        });
+        confetti({
+          particleCount: 5,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1 },
+          colors: ['#e2a63e', '#e07a3f', '#d84350']
+        });
+        if (Date.now() < end) requestAnimationFrame(frame);
+      }());
+    }
+
+    function startMusic() {
+      if (musicStarted) return;
+      const playPromise = bgMusic.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          musicStarted = true;
+          musicToggle.classList.add('playing');
+        }).catch((err) => {
+          // Autoplay was blocked - it will start on the next explicit click
+          console.log('Music autoplay blocked, waiting for user click:', err);
+        });
+      }
+    }
+
+    // Try to start music on the very first interaction anywhere on the page
+    document.body.addEventListener('click', () => {
+      startMusic();
+      fireWelcomeConfetti();
+    }, { once: true });
+
+    // Dedicated toggle button - always works regardless of autoplay state
+    musicToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      fireWelcomeConfetti();
+      if (bgMusic.paused) {
+        bgMusic.play().then(() => {
+          musicStarted = true;
+          musicToggle.classList.add('playing');
+        }).catch((err) => {
+          console.log('Could not play music:', err);
+          alert('Could not play the music. Make sure "nastelbom-background-music-463062.mp3" is in the same folder as this HTML file, and try clicking the button again.');
+        });
+      } else {
+        bgMusic.pause();
+        musicToggle.classList.remove('playing');
+      }
+    });
+
+    // Keep the icon in sync if the audio state changes for any other reason
+    bgMusic.addEventListener('play', () => musicToggle.classList.add('playing'));
+    bgMusic.addEventListener('pause', () => musicToggle.classList.remove('playing'));
+  </script>
+
+</body>
+
+</html>
